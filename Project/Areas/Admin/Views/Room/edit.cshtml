@@ -1,0 +1,39 @@
+﻿@model Project.Models.RoomViewModel
+
+@section cssadmin{
+    <link rel="stylesheet" href="~/Content/admin.styles.css">
+    <link rel="stylesheet" href="~/Content/admin.add.css">
+}
+<section id="content" class="container">
+    @using (Html.BeginForm("edit", "Room", FormMethod.Post))
+    {
+        <h1>Bảng nhập thông tin cho phòng thí nghiệm</h1>
+        <p>Vui lòng nhập đầy đủ thông tin.</p>
+        <span style="color: red; font-size: 20px; font-weight: 500; background-color: lightpink;">@ViewBag.Message</span>
+        @Html.ValidationSummary(true);
+
+        @Html.HiddenFor(m => m.room.id);
+
+        <label for="roomName"><b>Tên phòng thí nghiệm</b></label>
+        @Html.TextBoxFor(m => m.room.room_name, new { placeholder = "Nhập tên phòng thí nghiệm", required = "required", autofocus = "autofocus" })
+
+        <label for="capacity"><b>Sức chứa</b></label>
+        @Html.TextBoxFor(m => m.room.capacity, new { type = "number", min = "1", max = "60", required = "required" })
+
+        <label for="location"><b>Vị trí</b></label>
+        @Html.TextBoxFor(m => m.room.location, new { placeholder = "Nhập vị trí phòng thí nghiệm", required = "required" })
+
+        <label for="leader"><b>Người phụ trách</b></label>
+        <select name="leader">
+            <option value="-1">Chọn người phụ trách</option>
+            @foreach (var item in Model.accountList)
+            {
+                <option value="@item.id">@item.fullname</option>
+            }
+        </select>
+        <div class="clearfix">
+            <input type="submit" name="add" value="Sửa" class="btnAdd">
+        </div>
+    }
+</section>
+

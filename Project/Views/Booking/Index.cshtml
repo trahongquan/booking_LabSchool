@@ -1,0 +1,42 @@
+﻿@model Project.Models.BookingViewModel
+@section css{
+    <link rel="stylesheet" href="~/Content/booking.index.css">
+}
+
+<div class="table-responsive">
+    <table class="table table-hover table-striped table-bordered">
+        <thead class="bg-primary position-sticky top-0">
+            <tr>
+                <th class="header" scope="col">#</th>
+                <th class="header">Phòng học</th>
+                <th class="header">Ngày đặt</th>
+                <th class="header">Buổi sáng/chiều</th>
+                <th class="header">Trạng thái</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.bookingListClient)
+            {
+                <tr>
+                    <td scope="row"></td>
+                    <td>@Model.getRoomName(item.room_id)</td>
+                    <td>@Model.dateFormat(item.booking_date)</td>
+                    <td>@(item.booking_status == false ? "Ca sáng" : "Ca chiều")</td>
+                    @if (item.confirmation_status == 0)
+                    {
+                        <td>Chờ xác nhận</td>
+                    }
+                    else if (item.confirmation_status == 1)
+                    {
+                        <td>Đã xác nhận</td>
+                    }
+                    else
+                    {
+                        <td>Bị từ chối</td>
+                    }
+                </tr>
+            }
+        </tbody>
+        <caption class="text-center text-capitalize text-dark fw-semibold">Danh sách lịch đặt phòng học của tôi</caption>
+    </table>
+</div>

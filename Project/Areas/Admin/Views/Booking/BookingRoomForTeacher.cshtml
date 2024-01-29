@@ -1,0 +1,41 @@
+﻿@model Project.Models.BookingViewModel
+
+@{
+    var user = Session["user"] as Project.Models.account;
+    IEnumerable<SelectListItem> listTeacher = Model.getListTeacher();
+    IEnumerable<SelectListItem> listRoom = Model.getListRoom(user);
+    IEnumerable<SelectListItem> listShift = new List<SelectListItem>()
+{
+        new SelectListItem() {Value="f", Text="Ca sáng"},
+        new SelectListItem() {Value="t", Text="Ca chiều"}
+    };
+}
+@section cssadmin{
+    <link rel="stylesheet" href="~/Content/admin.styles.css">
+    <link rel="stylesheet" href="~/Content/admin.add.css">
+}
+<section id="content" class="container">
+    @using (Html.BeginForm("BookingForTeach", "Booking", FormMethod.Post))
+    {
+        <h1>Bảng đặt lịch cho giáo viên</h1>
+        <p>Vui lòng nhập đầy đủ thông tin.</p>
+        <span class="text-danger fw-bold">@ViewBag.Message</span>
+
+        <label for="eNumber"><b>Giảng viên</b></label>
+        @Html.DropDownListFor(m => m.booking.user_id, listTeacher, "-- Chọn giáo viên --", new { required = "required" })
+
+        <label for="eType"><b>Phòng học</b></label>
+        @Html.DropDownListFor(m => m.booking.room_id, listRoom, "-- Chọn phòng thí nghiệm --", new { required = "required" })
+
+        <label for="date"><b>Chọn ngày</b></label>
+        @Html.TextBoxFor(m => m.booking.booking_date, new { type = "date", required = "required" })
+
+        <label for="shift">Chọn ca</label>
+        @Html.DropDownListFor(m => m.shift, listShift, "--- Chọn ca ---", new { required = "required" })
+
+        <div class="clearfix">
+            <input type="submit" name="add" value="Đặt lịch" class="btnAdd">
+        </div>
+    }
+</section>
+

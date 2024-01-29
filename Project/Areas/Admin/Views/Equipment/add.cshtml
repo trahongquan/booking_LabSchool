@@ -1,0 +1,69 @@
+﻿@model Project.Models.EquipmentViewModel
+@{ 
+    IEnumerable<SelectListItem> listVol = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "220", Text = "220 Volts" },
+        new SelectListItem { Value = "110", Text = "110 Volts" }
+    };
+
+    IEnumerable<SelectListItem> listType = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Máy lạnh", Text = "Máy lạnh" },
+        new SelectListItem { Value = "Quạt", Text = "Quạt" },
+        new SelectListItem { Value = "Tivi", Text = "Tivi" },
+        new SelectListItem { Value = "Máy chiếu", Text = "Máy chiếu" },
+        new SelectListItem { Value = "Loa", Text = "Loa" },
+        new SelectListItem { Value = "Micro", Text = "Micro" },
+        new SelectListItem { Value = "Phấn", Text = "Phấn" },
+        new SelectListItem { Value = "Bảng", Text = "Bảng" },
+        new SelectListItem { Value = "Bàn ghế", Text = "Bàn ghế" }
+    };
+
+    IEnumerable<SelectListItem> listStatus = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "D", Text = "Còn hoạt động" },
+        new SelectListItem { Value = "S", Text = "Bị hỏng" }
+    };
+
+    IEnumerable<SelectListItem> listRoom = Model.listRoomSelection();
+
+}
+
+@section cssadmin{
+    <link rel="stylesheet" href="~/Content/admin.styles.css">
+    <link rel="stylesheet" href="~/Content/admin.add.css">
+}
+<section id="content" class="container">
+    @using (Html.BeginForm("Add", "Equipment", FormMethod.Post))
+    {
+        <h1>Bảng nhập thông tin cho trang thiết bị</h1>
+        <p>Vui lòng nhập đầy đủ thông tin.</p>
+        <span style="color: red; font-size: 20px; font-weight: 500; background-color: lightpink;">@ViewBag.Message</span>
+        <label for="eNumber"><b>Số hiệu</b></label>
+        @Html.TextBoxFor(m => m.equip.equipment_number, new { placeholder = "Nhập số hiệu thiết bị thiết bị", required = "required", autofocus = "autofocus" })
+
+        <label for="eType"><b>Loại thiết bị</b></label>
+        @Html.DropDownListFor(m => m.equip.equipment_type, listType, "-- Chọn loại thiết bị --", new { required = "required" })
+
+        <label for="eProductionYear"><b>Năm sản xuất</b></label>
+        @Html.TextBoxFor(m => m.equip.production_year, new { type = "number", value = "2016", min = "1900", max = "2099", step = "1", required = "required" })
+
+        <label for="eOrigin"><b>Xuất xứ</b></label>
+        @Html.TextBoxFor(m => m.equip.origin, new { placeholder = "Nhập xuất xứ thiết bị", required = "required" })
+
+        <label for="eVol">Hiệu điện thế</label>
+        @Html.DropDownListFor(m => m.equip.voltage, listVol, "-- Chọn hiệu điện thế --", new { required = "required" })
+
+
+        <label for="eStatus"><b>Tình trạng</b></label>
+        @Html.DropDownListFor(m => m.status, listStatus, "-- Chọn tình trạng thiết bị --", new { required = "required" })
+
+        <label for="eRoom"><b>Phòng thí nghiệm</b></label>
+        @Html.DropDownListFor(m => m.equip.room_id, listRoom, "-- Chọn phòng thí nghiệm --", new { required = "required" })
+
+        <div class="clearfix">
+            <input type="submit" name="add" value="Thêm" class="btnAdd">
+        </div>
+    }
+</section>
+

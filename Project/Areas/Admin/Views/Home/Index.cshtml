@@ -1,0 +1,79 @@
+﻿@model Project.Models.DashboardViewModel
+@{
+    ViewBag.Title = "Index";
+}
+
+@section cssadmin{
+    <link rel="stylesheet" href="~/Content/admin.styles.css">
+    <link rel="stylesheet" href="~/Content/admin.list.css">
+}
+
+<main>
+    <div class="container-fluid px-4">
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item active">Trang chủ</li>
+        </ol>
+        <hr />
+    </div>
+    <div class="row mx-5">
+
+        @if (Model.isAdmin)
+        {
+            <div class="col-xl-3 col-md-6">
+                <div class="card bg-primary text-white mb-4">
+                    <div class="card-body">Tài khoản</div>
+                    <div class="card-footer d-flex align-items-center justify-content-between">
+                        <div class="small text-white">Số lượng: @Model.numberAccount</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6">
+                <div class="card bg-primary text-white mb-4">
+                    <div class="card-body">Phòng thí nghiệm</div>
+                    <div class="card-footer d-flex align-items-center justify-content-between">
+                        <div class="small text-white">Số lượng: @Model.numberRoom</div>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">Trang thiết bị</div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <div class="small text-white">Số lượng: @Model.numberEquipment</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">Số lượng đặt phòng thí nghiệm</div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <div class="small text-white">Số lượng: @Model.numberBooking</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">Thiết bị còn hoạt động</div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <div class="small text-white">Số lượng: @Model.numberEquipmentActive</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">Thiết bị bị hỏng</div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <div class="small text-white">Số lượng: @Model.numberEquipmentUnactive</div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</main>
+

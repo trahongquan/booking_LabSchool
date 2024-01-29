@@ -1,0 +1,104 @@
+﻿@{
+    ViewBag.Title = "List";
+}
+@section cssadmin{
+    <link rel="stylesheet" href="~/Content/admin.styles.css">
+    <link rel="stylesheet" href="~/Content/admin.list.css">
+    <link rel="stylesheet" href="~/Content/booking.index.css">
+}
+<main>
+    <div class="container-fluid px-4">
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item active">Trang chủ</li>
+            <li class="breadcrumb-item">Thống kê thời gian khai thác</li>
+        </ol>
+        <hr class="mb-1" />
+        <div class="d-flex justify-content-between align-items-center mb-2 w-100">
+
+        </div>
+        <div class="container-fluid px-4">
+            <label for="date">Ngày bắt đầu: </label>
+            <input type="date" class="form-control-sm" id="dateFrom"/>
+
+            <label for="date">Ngày kết thúc: </label>
+            <input type="date" class="form-control-sm" id="dateTo" onchange="getData();" />
+            <hr />
+        </div>
+        <div class="row mx-5 overflow-auto" style="height: 65vh;" id="class-list">
+
+        </div>
+    </div>
+</main>
+
+
+
+<script>
+    function getData() {
+        var dateFrom = $("#dateFrom").val();  
+
+        var dateTo = $("#dateTo").val();
+
+        var _dateFrom = encodeURIComponent(dateFrom);
+        var _dateTo = encodeURIComponent(dateTo);
+
+        var apiUrl = `/Admin/Booking/StatisticsBooking?from=${_dateFrom}&to=${_dateTo}`;
+        $("#class-list").html(null);
+        $.ajax({
+            url: apiUrl,
+
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                if (data.Error) {
+                    var html = `<p class="text-center text-bg-danger">${data.Error}.</p>`;
+                    $('#class-list').html(html);
+                } else {
+                    var html = '';
+                    $.each(data.availableRooms, function (key, item) {
+
+                        html += `<div class="col-xl-4 col-md-6">
+            <div class="card bg-light text-dark mb-4">
+                <h5 class="card-header bg-primary text-center">${item.RoomName}</h5>
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Người phụ trách: <span class="text-dark">
+                    ${item.RoomLeader || 'Không có'}</span></h6>
+                    <p class="card-text">
+                        <label>Ca sáng: </label>
+                        <span> ${item.countMorningBook}</span>
+                        <br />
+                        <label>Ca chiều: </label>
+                        <span> ${item.countEveningBook}</span>
+                    </p>
+                </div>
+            </div>
+        </div>`;
+                    });
+                    $("#class-list").html(html);
+                }
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        // Lấy ngày hiện tại
+        var currentDate = new Date();
+
+        // Thiết lập ngày bắt đầu là ngày đầu tháng
+        var firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        $('#dateFrom').val(firstDayOfMonth.toISOString().slice(0, 10));
+
+        // Thiết lập ngày kết thúc là ngày cuối tháng
+        var lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+        $('#dateTo').val(lastDayOfMonth.toISOString().slice(0, 10));
+
+        // Gọi hàm getData() khi trang được tải lần đầu
+        getData();
+    });
+</script>
+
+
+
+

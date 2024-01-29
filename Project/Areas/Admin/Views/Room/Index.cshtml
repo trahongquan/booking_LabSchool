@@ -1,0 +1,70 @@
+﻿@model Project.Models.RoomViewModel
+@section cssadmin{
+    <link rel="stylesheet" href="~/Content/admin.styles.css">
+    <link rel="stylesheet" href="~/Content/admin.list.css">
+}
+<main>
+    <div class="container-fluid px-4">
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item active">Trang chủ</li>
+            <li class="breadcrumb-item">Phòng thí nghiệm</li>
+        </ol>
+        <hr />
+        <div class="card mb-4">
+            <div class="card-header"></div>
+        </div>
+        @if (Model.isAdmin)
+        {
+            <div class="d-flex mb-2">
+                @Html.ActionLink("Thêm mới phòng thí nghiệm", "add", "Room", null, new { @class = "btn btn-primary my-2 my-sm-0", style = "width: 300px;" })
+            </div>
+        }
+        @if (Model.roomLead == null && !Model.isAdmin)
+        {
+            <span style="color: red; font-weight:500;">Tài khoản này hiện tại không quản lý phòng thí nghiệm nào cả.</span>
+        }
+        else
+        {
+            <table border="1">
+                <tr>
+                    <th>ID</th>
+                    <th>Tên phòng thí nghiệm</th>
+                    <th>Sức chứa</th>
+                    <th>Vị trí</th>
+                    <th>Người phụ trách</th>
+                    <th></th>
+                </tr>
+                @if (Model.isAdmin == true)
+                {
+                    foreach (var item in Model.roomList)
+                    {
+                        <tr>
+                            <td>@item.id</td>
+                            <td>@item.room_name</td>
+                            <td>@item.capacity</td>
+                            <td>@item.location</td>
+                            <td>@Model.getLeaderClass(item.leader_id)</td>
+                            <td>
+                                @Html.ActionLink("Sửa", "edit", "Room", new { id = item.id }, new { @class = "btn btn-success my-2 my-sm-0" }) |
+                                @Html.ActionLink("Xóa", "Delete", "Room", new { id = item.id }, new { @class = "btn btn-danger my-2 my-sm-0", onclick = "if(!(confirm('Bạn có muốn xóa phòng thí nghiệm này không?'))) return false" })
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td>@Model.roomLead.id</td>
+                        <td>@Model.roomLead.room_name</td>
+                        <td>@Model.roomLead.capacity</td>
+                        <td>@Model.roomLead.location</td>
+                        <td>@Model.leaderClass</td>
+                        <td></td>
+                    </tr>
+                }
+            </table>
+        }
+
+    </div>
+</main>
+

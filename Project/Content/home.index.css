@@ -1,0 +1,17 @@
+﻿
+.main-class {
+    border: 2px solid red;
+}
+
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Transparent black background */
+    pointer-events: none; /* Allow click events to pass through to elements below */
+    z-index: 999; /* Ensure the overlay is on top of everything else */
+    opacity: 0; /* Full opacity */
+    transition: opacity 0.3s ease; /* Add a smooth transition effect */
+}

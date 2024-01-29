@@ -1,0 +1,170 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+    var user = Session["user"] as Project.Models.account;
+}
+
+@section css{
+    <link rel="stylesheet" href="~/Content/home.index.css">
+}
+
+<main>
+    <div class="modal" tabindex="-1" role="dialog" id="myModal" data-uid="-1" data-rid="-1" data-shift="-1">
+        <div class="modal-dialog shadow-lg rounded cente" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title">Xác nhận</h5>
+                    <button type="button" class="close bg-primary" data-dismiss="modal" onclick="closeModal();" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Nhấn đồng ý để xác nhận đặt phòng thí nghiệm.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary close" onclick="closeModal();">Hủy</button>
+                    <button type="button" class="btn btn-primary" id="btnOK" onclick="bookingOK()">Đồng ý</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="overlay"></div>
+    <div class="container-fluid px-4">
+        <label for="date">Chọn ngày: </label>
+        <input type="date" class="form-control-sm" id="inputDate" onchange="getData();" />
+        <hr />
+    </div>
+    <div class="row mx-5" id="class-list">
+        <p class="text-center text-bg-danger">Vui lòng chọn ngày</p>
+    </div>
+</main>
+
+
+
+<script>
+    
+
+    function getData() {
+        var inputDate = $("#inputDate").val();
+        var selectedDate = new Date(inputDate);
+        var currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+        var tomorrowDate = new Date(currentDate);
+        tomorrowDate.setDate(currentDate.getDate() + 1);
+        if (selectedDate < tomorrowDate) {
+            alert("Vui lòng chọn ngày từ ngày mai trở đi!");
+        } else {
+            var apiUrl = "/Booking/List?date=" + encodeURIComponent(inputDate);
+            $("#class-list").html(null);
+            $.ajax({
+                url: apiUrl,
+
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    if (data.Error) {
+                        var html = `<p class="text-center text-bg-danger">${data.Error}.</p>`;
+                        $('#class-list').html(html);
+                    } else {
+                        var html = '';
+                        $.each(data.availableRooms, function (key, item) {
+                            var shiftMorning = `<a href="#." onclick="openModel(${item.RoomId}, @user.id, 0);" class="shift text-decoration-none">Chọn</a>`;
+                            var eveningMorning = `<a href="#." onclick="openModel(${item.RoomId}, @user.id, 1);" class="shift text-decoration-none">Chọn</a>`;
+
+                            html += `<div class="col-xl-4 col-md-6">
+            <div class="card bg-light text-dark mb-4">
+                <h5 class="card-header text-bg-success text-center">${item.RoomName}</h5>
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Người phụ trách: <span class="text-dark">
+                    ${item.RoomLeader || 'Không có'}</span></h6>
+                    <p class="card-text">
+                        <label>Ca sáng: <span>&#10003;</span></label>
+                        ${item.IsMorningAvailable == false ? shiftMorning : ''}
+                        <br />
+                        <label>Ca chiều: <span>&#10006;</span></label>
+                        ${item.IsEveningAvailable == false ? eveningMorning : ''}
+                    </p>
+                </div>
+            </div>
+        </div>`;
+                        });
+                        $("#class-list").html(html);
+                    }
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+    }
+
+    $(document).ready(function () {
+        // Lấy ngày hôm nay
+        var today = new Date();
+
+        // Thêm 1 ngày để có ngày mai
+        var tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+
+        // Định dạng ngày để cập nhật vào input
+        var formattedDate = tomorrow.toISOString().split('T')[0];
+    
+        // Đặt giá trị ngày bắt đầu là ngày mai
+        $('#inputDate').val(formattedDate);
+
+        getData();
+    });
+</script>
+
+<script>
+    function openModel(rid, uid, sid) {
+        // Lấy modal bằng ID
+        const modal = document.getElementById("myModal");
+        modal.addEventListener("click", function (event) {
+            event.preventDefault(); // Ngăn chặn hành vi mặc định của liên kết
+        });
+
+        const inputDate = $("#inputDate").val();
+
+        const dataToSend = {
+            room_id: rid,
+            user_id: uid,
+            shift: sid,
+            date: inputDate
+        };
+        localStorage.setItem("dataToSend", JSON.stringify(dataToSend));
+        modal.style.display = "block";
+        $('#overlay').css('opacity', '1');
+    }
+
+    // Đóng modal khi nhấn vào nút đóng
+    function closeModal() {
+        const modal = document.getElementById("myModal");
+        modal.style.display = "none";
+        $('#overlay').css('opacity', '0');
+    }
+    function bookingOK() {
+        // Make the AJAX call to your API endpoint
+        $.ajax({
+            url: "/Booking/addBooking",
+            type: "POST",
+            data: localStorage.getItem("dataToSend"),
+            contentType: "application/json",
+            success: function (response) {
+                alert(response.Mess);
+                closeModal();
+            },
+            error: function (error) {
+                // Handle the error (if needed)
+            }
+        });
+    }
+
+    // Đóng modal khi nhấp chuột ra ngoài phần modal
+    window.addEventListener("click", function (event) {
+        const modal = document.getElementById("myModal");
+        if (event.target === modal) {
+            modal.style.display = "none";
+            $('#overlay').css('opacity', '0');
+        }
+    });
+</script>

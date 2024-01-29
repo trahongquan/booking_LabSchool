@@ -1,0 +1,95 @@
+﻿@model  Project.Models.EquipmentViewModel
+@section cssadmin{
+    <link rel="stylesheet" href="~/Content/admin.styles.css">
+    <link rel="stylesheet" href="~/Content/admin.list.css">
+    <link rel="stylesheet" href="~/Content/booking.index.css">
+}
+
+@{
+    IEnumerable<SelectListItem> listSelects = new List<SelectListItem>
+{
+        new SelectListItem { Value = "type", Text = "Theo loại thiết bị" },
+        new SelectListItem { Value = "status", Text = "Theo tình trạng thiết bị" },
+        new SelectListItem { Value = "room", Text = "Theo phòng học" }
+    };
+
+}
+<main>
+    <div class="container-fluid px-4">
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item active">Trang chủ</li>
+            <li class="breadcrumb-item">Thiết bị</li>
+        </ol>
+        <hr class="mb-1" />
+        <div class="d-flex justify-content-between align-items-center mb-2 w-100">
+            @if (Model.isAdmin)
+            {
+                @Html.ActionLink("Thêm mới thiết bị", "add", "Equipment", null, new { @class = "btn btn-primary my-2 my-sm-0" })
+            }
+            @using (Html.BeginForm("Search", "Equipment", new { textSearch = Model.textSearch }, FormMethod.Get, new { @class = "d-flex align-items-center gap-4 w-50" }))
+            {
+                @Html.TextBoxFor(m => m.textSearch, new { placeholder = "Tìm kiếm thiết bị...", @class = "form-control mr-sm-2" })
+                <input type="submit" value="Tìm kiếm" name="search" class="btn btn-outline-success my-2 my-sm-0" />
+            }
+
+            @Html.DropDownList("Sắp xếp", listSelects, "-- Chọn kiểu sắp xếp --", new { id = "sortDropdown" })
+        </div>
+
+        <div class="table-responsive" style="max-height: 70vh;">
+            <table class="table table-hover table-striped table-bordered">
+                <thead class="bg-primary position-sticky top-0">
+                    <tr class="bg-primary">
+                        <th class="header" scope="col">#</th>
+                        <th class="header">Số hiệu</th>
+                        <th class="header">Loại thiết bị</th>
+                        <th class="header">Thuộc phòng</th>
+                        <th class="header">Năm sản xuất</th>
+                        <th class="header">Nước sản xuất</th>
+                        <th class="header">Hiệu điện thế</th>
+                        <th class="header">Tình trạng</th>
+                        <th class="header"></th>
+                    </tr>
+                </thead>
+                <tbody id="list-equip">
+                    @foreach (var item in Model.listEquipment)
+                    {
+                        <tr>
+                            <td scope="row"></td>
+                            <td>@item.equipment_number</td>
+                            <td>@item.equipment_type</td>
+                            <td>@Model.getRoomName(item.room_id)</td>
+                            <td>@item.production_year</td>
+                            <td>@item.origin</td>
+                            <td>@item.voltage</td>
+                            <td>@(item.status == true ? "Còn hoạt động" : "Bị hỏng")</td>
+                            <td>
+                                @Html.ActionLink("Sửa", "edit", "Equipment", new { id = item.id }, new { @class = "btn btn-success my-2 my-sm-0" }) |
+                                @Html.ActionLink("Xóa", "Delete", "Equipment", new { id = item.id }, new { @class = "btn btn-danger my-2 my-sm-0", onclick = "if(!(confirm('Bạn có muốn xóa thiết bị này không?'))) return false" })
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<script>
+    $("#sortDropdown").on("change", function () {
+        var selectedValue = $(this).val();
+        $("#list-equip").html(null);
+        $.ajax({
+            url: "/Admin/Equipment/sort",
+            type: "GET",
+            data: { sort: selectedValue },
+            dataType: "json",
+            success: function (data) {
+                $("#list-equip").html(data.html);
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    });
+</script>
+

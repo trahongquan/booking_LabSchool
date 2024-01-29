@@ -1,0 +1,52 @@
+﻿@model Project.Models.account
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng nhập</title>
+    <link rel="stylesheet" href="~/Content/login.style.css" type="text/css"/>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+          integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer" />
+</head>
+<body>
+    <main>
+        <div class="container" id="container">
+            <div class="form-container sign-in-container">
+                @using (Html.BeginForm("login", "Login", FormMethod.Post, new { }))
+                {
+                    <h1>Đăng nhập</h1>
+                    <div class="social-container">
+                        <a href="#." class="social"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#." class="social"><i class="fab fa-google-plus-g"></i></a>
+                        <a href="#." class="social"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                    <span>hoặc có thể đăng nhập bằng</span>
+                    <span class="message">@ViewBag.Message</span>
+                    @Html.TextBoxFor(m => m.username, new { placeholder = "Tên đăng nhập", required = "required" });
+                    @Html.PasswordFor(m => m.password, new { placeholder = "Mật khẩu", required = "required" })
+                    <input type="submit" value="Đăng nhập" />
+                }
+            </div>
+            <div class="overlay-container">
+                <div class="overlay">
+                    <div class="overlay-panel overlay-right">
+                        <h2>Học, học nữa, học mãi!</h2>
+                        <p>
+                            Xã hội luôn luôn phát triển,
+                            nếu không ngừng trau dồi kiến thức chúng ta sẽ nhanh chóng bị lạc hậu.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

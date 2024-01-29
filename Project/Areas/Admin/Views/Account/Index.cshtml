@@ -1,0 +1,59 @@
+﻿@model Project.Models.AccountViewModel
+@{
+    ViewBag.Title = "Index";
+}
+@section cssadmin{
+    <link rel="stylesheet" href="~/Content/admin.styles.css">
+    <link rel="stylesheet" href="~/Content/admin.list.css">
+}
+<main>
+    <div class="container-fluid px-4">
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item active">Trang chủ</li>
+            <li class="breadcrumb-item">Tài khoản</li>
+        </ol>
+        <hr />
+        <div class="d-flex mb-2">
+            @Html.ActionLink("Thêm mới tài khoản", "addAccount", "Account", null, new { @class = "btn btn-primary my-2 my-sm-0" })
+        </div>
+        <table border="1">
+            <tr>
+                <th>Tên đăng nhập</th>
+                <th>Mật khẩu</th>
+                <th>Họ tên</th>
+                <th>Quyền</th>
+                <th></th>
+            </tr>
+            @foreach (var item in Model.listAccount)
+            {
+
+                <tr>
+                    <td>@item.username</td>
+                    <td>@item.password</td>
+                    <td>@item.fullname</td>
+                    <td>@Model.getRoleName(item.role_id)</td>
+
+                    @if (item.role_id != 1)
+                    {
+                        <td>
+
+                            @Html.ActionLink("Sửa", "editAccount", "Account", new { id = item.id }, new {@class= "btn btn-success my-2 my-sm-0" }) |
+                            @Html.ActionLink("Xóa", "Delete", "Account", new { id = item.id }, new { @class = "btn btn-danger my-2 my-sm-0",onclick = "if(!(confirm('Bạn có muốn xóa tài khoản này không?'))) return false" })
+                        </td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                </tr>
+            }
+        </table>
+    </div>
+</main>
+
+@if (ViewBag.Message != null)
+{
+    <script>
+        alert("Không thể xóa tài khoản này.");
+    </script>
+}

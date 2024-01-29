@@ -1,0 +1,37 @@
+﻿@model Project.Models.AccountViewModel
+@{
+    ViewBag.Title = "addAccount";
+}
+@section cssadmin{
+    <link rel="stylesheet" href="~/Content/admin.styles.css">
+    <link rel="stylesheet" href="~/Content/admin.add.css">
+}
+<section id="content" class="container">
+    @using (Html.BeginForm("Add", "Account", FormMethod.Post))
+    {
+        <h1>Bảng nhập thông tin cho tài khoản</h1>
+        <p>Vui lòng nhập đầy đủ thông tin.</p>
+        <span style="color: red; font-size: 20px; font-weight: 500; background-color: lightpink;">@ViewBag.Message</span>
+        @Html.ValidationSummary(true);
+
+        <label for="usename"><b>Tên đăng nhập</b></label>
+        @Html.TextBoxFor(m => m.account.username, new { placeholder = "Nhập tên đăng nhập", required = "required", autofocus = "autofocus" })
+
+        <label for="password"><b>Mật khẩu</b></label>
+        @Html.PasswordFor(m => m.account.password, new { placeholder = "******", required = "required" })
+
+        <label for="fullname"><b>Họ và tên</b></label>
+        @Html.TextBoxFor(m => m.account.fullname, new { placeholder = "Nhập họ và tên", required = "required" })
+
+        <label for="role"><b>Quyền</b></label>
+        <select name="role_id">
+            @foreach (var item in Model.listRole)
+            {
+                <option value="@item.id">@item.role_name</option>
+            }
+        </select>
+        <div class="clearfix">
+            <input type="submit" name="add" value="Add" class="btnAdd">
+        </div>
+    }
+</section>

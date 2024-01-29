@@ -1,0 +1,13 @@
+﻿body {
+    counter-reset: Serial;
+}
+
+.table-responsive {
+    max-height: 80vh;
+}
+
+tr td:first-child:before {
+    counter-increment: Serial;
+    content: counter(Serial);
+}
+
